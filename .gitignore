@@ -1,0 +1,7 @@
+# Ignore environment files and folders
+# (since they likely contain sensitive information)
+**/env/
+**/*/.env
+
+# Ignore node_modules
+node_modules/
