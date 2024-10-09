@@ -1,6 +1,7 @@
 import { readFile } from "fs/promises";
 import * as path from "path"
 import * as dotenv from "dotenv"
+import { WebUntisAnonymousAuth } from "webuntis";
 
 export const ENV_PATH = path.join(process.cwd(), "env")
 
@@ -20,7 +21,10 @@ export const getConfig = async (defaultPath?: string): Promise<Config> => {
 }
 
 export type Config = {
-    debug: {
-        level: "debug" | "info" | "warning" | "error" | "none"
+    untis: {
+        year: string,
+        course: string,
+        school: string,
+        base: string,
     }
 }
