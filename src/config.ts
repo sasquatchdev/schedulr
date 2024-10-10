@@ -1,7 +1,6 @@
 import { readFile } from "fs/promises";
 import * as path from "path"
 import * as dotenv from "dotenv"
-import { WebUntisAnonymousAuth } from "webuntis";
 
 export const ENV_PATH = path.join(process.cwd(), "env")
 
@@ -26,5 +25,14 @@ export type Config = {
         course: string,
         school: string,
         base: string,
+    },
+    google: {
+        credentials: string,
+        calendar: string,
+    },
+    time: {
+        zone: string,
+        range: number,
+        offset: string,
     }
 }

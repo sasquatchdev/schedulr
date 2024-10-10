@@ -1,4 +1,5 @@
 import { Klasse, Lesson, SchoolYear, ShortData, WebUntis, WebUntisAnonymousAuth, WebUntisElementType } from "webuntis"
+import { Config } from "./config.js";
 
 
 export const getWebUntisSimple = async (
@@ -21,14 +22,14 @@ export const getCourse = async (untis: WebUntis, schoolyear: SchoolYear, name: s
     return course;
 }
 
-export const getPeriods = async (untis: WebUntis, course: Klasse, start: Date, end: Date): Promise<Period[]> => {
+export const getPeriods = async (untis: WebUntis, config: Config, course: Klasse, start: Date, end: Date): Promise<Period[]> => {
     const lessons = await untis.getTimetableForRange(start, end, course.id, WebUntisElementType.CLASS);
-    return Promise.all(lessons.map(getPeriod));
+    return Promise.all(lessons.map(l => getPeriod(l, config)));
 }
 
 export const getISOTime = (value: number): string => {
     const padded = value.toString().padStart(4, "0");
-    return `${padded.slice(0, 2)}:${padded.slice(2, 4)}`;
+    return `${padded.slice(0, 2)}:${padded.slice(2, 4)}:00`;
 }
 
 export const getISODateTime = (dateRaw: number, timeRaw: number): string => {
@@ -46,17 +47,21 @@ export type Status =  "irregular" | "cancelled" | "substituted";
 export type Period = {
     startISO: string,
     endISO: string,
+    nameShort: string,
+    nameLong: string,
     teacherLong: string,
     teacherShort: string,
     orgTeacher?: string,
     roomLong: string,
     roomShort: string,
     orgRoom?: string,
+    info?: string,
+    id: number,
     status?: Status
 }
 
-export const getPeriod = async (lesson: Lesson): Promise<Period> => {
-    const offset = "+2:00"; // For Europe/Berlin
+export const getPeriod = async (lesson: Lesson, config: Config): Promise<Period> => {
+    const offset = config.time.offset;
     const startISO = getISODateTimeOffset(lesson.date, lesson.startTime, offset);
     const endISO = getISODateTimeOffset(lesson.date, lesson.endTime, offset);
 
@@ -71,12 +76,16 @@ export const getPeriod = async (lesson: Lesson): Promise<Period> => {
 
     return {
         startISO, endISO,
+        nameShort: lesson.su[0].name,
+        nameLong: lesson.su[0].longname,
         roomLong: lesson.ro[0].longname,
         roomShort: lesson.ro[0].name,
         orgRoom: lesson.ro[0].orgname,
         teacherLong: lesson.te[0].longname,
         teacherShort: lesson.te[0].name,
         orgTeacher: lesson.te[0].orgname,
+        info: lesson.info,
+        id: lesson.id,
         status
     }
 }
