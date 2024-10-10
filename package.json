@@ -1,6 +1,6 @@
 {
   "name": "schedulr",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "An easy way of integrating WebUntis with Google Calendar.",
   "main": "dist/index.js",
   "repository": "https://github.com/sasquatchdev/tableer",
